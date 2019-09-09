@@ -23,6 +23,7 @@ test:
   image: golang:1.13-alpine
   stage: test
   script:
+    - apk add git
     - go run . list
     - go run . run build install
 
