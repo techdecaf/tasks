@@ -28,7 +28,7 @@ test:
     - go run . run build
 
 deploy:
-  image: mesosphere/aws-cli:1.14.5
+  image: techdecaf/ci:1.2.0
   stage: deploy
   script:
     - ./dist/linux/tasks run install
