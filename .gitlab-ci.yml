@@ -25,7 +25,7 @@ test:
   script:
     - apk add git
     - go run . list
-    - go run . run build install
+    - go run . run build
 
 deploy:
   image: mesosphere/aws-cli:1.14.5
@@ -33,5 +33,6 @@ deploy:
   script:
     - ./dist/linux/tasks run install
     - eval $(tasks run login --log false)
+    - echo $AWS_ROLE_NAME
   only:
-    - master
+    # - master
