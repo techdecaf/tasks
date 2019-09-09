@@ -42,7 +42,7 @@ tasks:
       - "mv dist/{{OS}}/{{.CI_PROJECT_NAME}} /usr/local/bin"
 
   publish:
-    description: moves compiled files to /usr/local/bin/
+    description: publishes built files to s3 for deployment
     commands:
       - "aws s3 sync dist s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/{{.CI_COMMIT_TAG}}"
       - "aws s3 sync dist s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest"
