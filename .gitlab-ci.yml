@@ -33,6 +33,6 @@ deploy:
   script:
     - ./dist/linux/tasks run install
     - eval $(tasks run login --log false)
-    - echo $AWS_ROLE_NAME
+    - tasks run publish
   only:
-    # - master
+    - master
