@@ -107,12 +107,40 @@ tasks:
 
 ## CLI Options
 
-`tasks run [tasks]` run any number of tasks in order
-`tasks list` resolve all task variables and list all tasks with their descriptions
-`tasks --log true|false <cmd>` enables / disables additional log output, all regular command output is still sent to stdout
-ie: `[task_name][running] <command string>`
+```bash
+Usage:
+  tasks [flags]
+  tasks [command]
+
+Available Commands:
+  completion  generates a zsh plugin with completion scripts
+  exec        execute a command using all resolved variables from your taskfile.yaml
+  export      Resolves all global variables and prints an export script
+  help        Help about any command
+  init        initialize a task file in the current directory.
+  list        list available commands and their descriptions from your taskfile.yaml
+  run         runs a list of tasks as defined in your taskfile.yaml
+
+Flags:
+      --config string      config file (default is $HOME/.tasks.yaml)
+  -h, --help               help for tasks
+  -l, --log string         tasks run -l <true|false> task1 task2 <overrides log option in taskfile.y
+aml>
+  -f, --task-file string   use a specific taskfile.
+  -v, --version            Prints application version
+
+Use "tasks [command] --help" for more information about a command.
+```
 
 ## Variables
+
+variables are run in order, and also mapped to the environment, so you can feel free to use your defined variables in subsequent commands.
+
+variables are resolved in the following order:
+
+1. local variables declared as part of a task
+2. environmental variables that exist before the task is run
+3. global variables listed in the taskfile.yaml
 
 ## Credits
 
@@ -120,4 +148,4 @@ ie: `[task_name][running] <command string>`
 
 Application design taken from [go-task](https://github.com/go-task/task). Lots of key design elements come from this project, the only reason to roll our own was a fundamental breaking change on how to handle variables.
 
-The logo for this project provided by https://logomakr.com
+The logo for this project provided by [logomakr](https://logomakr.com)
