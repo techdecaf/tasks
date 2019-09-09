@@ -24,7 +24,7 @@ var runCmd = &cobra.Command{
 		}
 
 		if err := taskfile.Init(); err != nil {
-			log.Fatal("task_init", err)
+			log.Fatal("task_run", err)
 		}
 
 		// handle flags

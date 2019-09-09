@@ -20,7 +20,7 @@ var listCmd = &cobra.Command{
 		}
 
 		if err := taskfile.Init(); err != nil {
-			log.Fatal("task_init", err)
+			log.Fatal("task_list", err)
 		}
 
 		taskfile.List()
