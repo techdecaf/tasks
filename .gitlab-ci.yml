@@ -3,7 +3,7 @@
 # This file is a template, and might need editing before it works on your project.
 # Official framework image. Look for the different tagged releases at:
 # https://hub.docker.com/r/library/node/tags/
-image: golang:1.11-alpine
+# image: golang:1.11-alpine
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
@@ -11,9 +11,7 @@ cache:
   paths:
     - $CI_PROJECT_DIR/dist
 
-stages:
-  - test
-  - deploy
+stages: [test, deploy]
 
 test:
   image: golang:1.13-alpine
@@ -24,11 +22,11 @@ test:
     - go run . run build
 
 deploy:
-  image: techdecaf/ci:1.2.0
+  image: techdecaf/ci:1.3.0
   stage: deploy
   script:
     - ./dist/linux/tasks run install
     - eval $(tasks run login --log false)
     - tasks run publish
-  only:
-    - master
+  except: { changes: ["*.md"] }
+  only: [master]
