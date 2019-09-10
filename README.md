@@ -20,7 +20,7 @@ Tasks is a task runner written in GO. Designed to be a simple task runner suppor
 ## Installing Tasks
 
 ```bash
-curl -sL http://github.techdecaf.io/tasks/install.sh | sh
+sh -c "$(curl -fsSL https://raw.github.com/techdecaf/tasks/master/install.sh)"
 ```
 
 ## Using Tasks
