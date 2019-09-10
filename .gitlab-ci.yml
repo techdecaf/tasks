@@ -4,10 +4,6 @@
 # Official framework image. Look for the different tagged releases at:
 # https://hub.docker.com/r/library/node/tags/
 image: golang:1.11-alpine
-# image: node:8.11-alpine
-
-variables:
-  PROJECT_PATH: "/go/src/github.com/techdecaf/cgen"
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
