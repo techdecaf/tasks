@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# fail on any error
+set -e
+
+# install constants
+export APP_NAME=tasks
+export BUCKET_URL=http://github.techdecaf.io
+export INSTALL_PATH=/usr/local/bin
+
 # export os as lowercase string
 export OS=$(echo $(uname) | tr '[:upper:]' '[:lower:]')
 
@@ -7,11 +15,6 @@ if [[ "$OS" == "" ]]; then
     echo ERROR: failed to determine operating system version
     exit 1
 fi
-
-# CONSTS
-export APP_NAME=tasks
-export BUCKET_URL=http://github.techdecaf.io
-export INSTALL_PATH=/usr/local/bin
 
 export APP_BINARY=/tmp/$APP_NAME
 export LATEST_STABLE=$BUCKET_URL/$APP_NAME/latest/$OS/$APP_NAME
