@@ -138,6 +138,8 @@ github.com/techdecaf/templates v0.0.3-0.20190903192118-38f0aeb48700 h1:Cc8iDsBEh
 github.com/techdecaf/templates v0.0.3-0.20190903192118-38f0aeb48700/go.mod h1:9+5IDFix6V+FLQg3WEgYmis077X0tAj4eqqHt1Fi7ns=
 github.com/techdecaf/templates v0.0.4 h1:u9x1XK0x4hFa6alo684C37rfd0QaorBohttCLP9BE7M=
 github.com/techdecaf/templates v0.0.4/go.mod h1:9+5IDFix6V+FLQg3WEgYmis077X0tAj4eqqHt1Fi7ns=
+github.com/techdecaf/templates v0.0.5 h1:Oe+LTKaURHbgwTKpLciagcebmKc+/i6wRxYIGakbm+U=
+github.com/techdecaf/templates v0.0.5/go.mod h1:9+5IDFix6V+FLQg3WEgYmis077X0tAj4eqqHt1Fi7ns=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
 github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8/go.mod h1:VFNgLljTbGfSG7qAOspJ7OScBnGdDN/yBr0sguwnwf0=
