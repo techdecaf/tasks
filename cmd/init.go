@@ -39,24 +39,15 @@ var initCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(initCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// initCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// initCmd.Flags().BoolP("samples", "t", false, "Help message for toggle")
 }
 
 var taskfileSample = `
+# documentation for tasks can be found @ https://github.com/techdecaf/tasks
 options:
   log: true
 
 variables:
-  CI_PROJECT_NAME: tasks
+  CI_PROJECT_NAME: unset
   CI_COMMIT_TAG: "{{EXEC ~~git describe --tags --always --dirty --abbrev=0~~}}"
   CI_COMMIT_REF_NAME: "{{EXEC ~~git rev-parse --abbrev-ref HEAD~~}}"
   CI_COMMIT_SHA: "{{EXEC ~~git rev-parse HEAD~~}}"
@@ -69,7 +60,7 @@ tasks:
 
   dependencies:
     description: install all required dependencies
-    commands: [go get, go install]
+    commands: []
 
   build:
     description: build current project
@@ -78,7 +69,7 @@ tasks:
 
   clean:
     description: remove files created as part of the build step.
-    commands: ["rm -rf dist"]
+    commands: []
 
   test:
     description: run tests
