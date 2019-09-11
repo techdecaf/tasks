@@ -14,8 +14,10 @@ Tasks is a task runner written in GO. Designed to be a simple task runner suppor
     - [Go Template Options](#go-template-options)
   - [CLI Options](#cli-options)
   - [Variables](#variables)
-  - [Credits](#credits)
-    - [Application Design](#application-design)
+- [Credits](#credits)
+  - [Application Design](#application-design)
+  - [Logo](#logo)
+  - [Sponsor](#sponsor)
 
 ## Installing Tasks
 
@@ -142,10 +144,18 @@ variables are resolved in the following order:
 2. environmental variables that exist before the task is run
 3. global variables listed in the taskfile.yaml
 
-## Credits
+# Credits
 
-### Application Design
+## Application Design
 
 Application design taken from [go-task](https://github.com/go-task/task). Lots of key design elements come from this project, the only reason to roll our own was a fundamental breaking change on how to handle variables.
 
+## Logo
+
 The logo for this project provided by [logomakr](https://logomakr.com)
+
+## Sponsor
+
+[![TechDecaf](https://images.techdecaf.com/fit-in/150x/techdecaf/logo_full.png)](https://techdecaf.com)
+
+_Get back to doing what you do best, let us handle the rest._
