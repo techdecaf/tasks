@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/techdecaf/tasks/internal/taskfile"
-
 	"github.com/spf13/cobra"
 )
 
@@ -19,23 +17,21 @@ var execCmd = &cobra.Command{
 			log.Fatal("exec", "no arguments passed to exec.")
 		}
 
-		taskfile := &taskfile.TaskFile{}
-
 		// root flags
 		if file, _ := cmd.Flags().GetString("task-file"); file != "" {
-			taskfile.FilePath = file
+			tasks.FilePath = file
 		}
 
-		if err := taskfile.Init(); err != nil {
+		if err := tasks.Init(); err != nil {
 			log.Fatal("task_init", err)
 		}
 
 		// handle flags
 		if log, _ := cmd.Flags().GetString("log"); log != "" {
-			taskfile.Options.LogLevel = (log == "true")
+			tasks.Options.LogLevel = (log == "true")
 		}
 
-		out, err := taskfile.Execute(strings.Join(args, " "), "exec", "")
+		out, err := tasks.Execute(strings.Join(args, " "), "exec", "")
 		if err != nil {
 			log.Fatal("taskfie.execute", err)
 		}

@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"github.com/techdecaf/tasks/internal/taskfile"
-
 	"github.com/spf13/cobra"
 )
 
@@ -12,18 +10,16 @@ var listCmd = &cobra.Command{
 	Short: "list available commands and their descriptions from your taskfile.yaml",
 	Long:  `list available commands and their descriptions from your taskfile.yaml`,
 	Run: func(cmd *cobra.Command, args []string) {
-		taskfile := &taskfile.TaskFile{}
-
 		// root flags
 		if file, _ := cmd.Flags().GetString("task-file"); file != "" {
-			taskfile.FilePath = file
+			tasks.FilePath = file
 		}
 
-		if err := taskfile.Init(); err != nil {
+		if err := tasks.Init(); err != nil {
 			log.Fatal("task_list", err)
 		}
 
-		taskfile.List()
+		tasks.List()
 	},
 }
 

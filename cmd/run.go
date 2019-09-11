@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"github.com/techdecaf/tasks/internal/taskfile"
-
 	"github.com/spf13/cobra"
 )
 
@@ -12,28 +10,27 @@ var runCmd = &cobra.Command{
 	Short: "runs a list of tasks as defined in your taskfile.yaml",
 	Long:  `runs a list of tasks as defined in your taskfile.yaml`,
 	Run: func(cmd *cobra.Command, args []string) {
-		taskfile := &taskfile.TaskFile{}
 
 		// root flags
 		if file, _ := cmd.Flags().GetString("task-file"); file != "" {
-			taskfile.FilePath = file
+			tasks.FilePath = file
 		}
 
 		if len(args) == 0 {
 			args = append(args, "default")
 		}
 
-		if err := taskfile.Init(); err != nil {
+		if err := tasks.Init(); err != nil {
 			log.Fatal("task_run", err)
 		}
 
 		// handle flags
 		if log, _ := cmd.Flags().GetString("log"); log != "" {
-			taskfile.Options.LogLevel = (log == "true")
+			tasks.Options.LogLevel = (log == "true")
 		}
 
 		for _, task := range args {
-			if err := taskfile.Run(task); err != nil {
+			if err := tasks.Run(task); err != nil {
 				log.Fatal(task, err)
 			}
 		}
