@@ -89,7 +89,7 @@ func (tasks *TaskFile) Init() (err error) {
 
 // Execute a command using all variables resolved in the taskfile
 func (tasks *TaskFile) Execute(cmd, name, dir string) (out string, err error) {
-	command, err := tasks.variables.Expander.Expand(cmd)
+	command, err := templates.Expand(cmd, tasks.variables.Functions)
 	if err != nil {
 		return "", err
 	}
@@ -142,8 +142,8 @@ func (tasks *TaskFile) Run(key string) error {
 // List - all task descriptions
 func (tasks *TaskFile) List() {
 	fmt.Println("variables:")
-	for key, val := range tasks.variables.Expander.Variables {
-		fmt.Printf("%s%s: %s\n", spaces(4), key, val)
+	for _, v := range tasks.variables.List {
+		fmt.Printf("%s%s: %s\n", spaces(4), v.Key, os.Getenv(v.Key))
 	}
 
 	fmt.Println("tasks:")
@@ -154,8 +154,8 @@ func (tasks *TaskFile) List() {
 
 // Export variables for use in other applications.
 func (tasks *TaskFile) Export() {
-	for key, val := range tasks.variables.Expander.Variables {
-		fmt.Printf("export %s=%s\n", key, val)
+	for _, v := range tasks.variables.List {
+		fmt.Printf("export %s=%s\n", v.Key, os.Getenv(v.Key))
 	}
 }
 

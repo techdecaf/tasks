@@ -14,7 +14,7 @@ variables:
 
 tasks:
   default:
-    description: is the task that runs when no tasks have been specified. `tasks run` == `tasks run default`
+    description: runs when no other tasks have been specified.`
     commands: [tasks list]
 
   dependencies:
