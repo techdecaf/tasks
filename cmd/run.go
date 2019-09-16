@@ -25,8 +25,8 @@ var runCmd = &cobra.Command{
 		}
 
 		// handle flags
-		if log, _ := cmd.Flags().GetString("log"); log != "" {
-			tasks.Options.LogLevel = (log == "true")
+		if silent, _ := cmd.Flags().GetBool("silent"); silent {
+			tasks.Options.LogLevel = false
 		}
 
 		for _, task := range args {

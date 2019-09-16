@@ -46,7 +46,7 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tasks.yaml)")
-	rootCmd.PersistentFlags().StringP("log", "l", "", "tasks run -l <true|false> task1 task2 <overrides log option in taskfile.yaml>")
+	rootCmd.PersistentFlags().BoolP("silent", "s", false, "suppress log messages <overrides log option in taskfile.yaml>")
 
 	rootCmd.PersistentFlags().StringP("task-file", "f", "", "use a specific taskfile.")
 
