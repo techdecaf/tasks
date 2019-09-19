@@ -126,8 +126,7 @@ Available Commands:
 Flags:
       --config string      config file (default is $HOME/.tasks.yaml)
   -h, --help               help for tasks
-  -l, --log string         tasks run -l <true|false> task1 task2 <overrides log option in taskfile.y
-aml>
+  -s, --silent             suppress log messages <overrides log option in taskfile.yaml>
   -f, --task-file string   use a specific taskfile.
   -v, --version            Prints application version
 
