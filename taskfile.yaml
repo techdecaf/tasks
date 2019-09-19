@@ -47,6 +47,17 @@ tasks:
       - "aws s3 sync dist s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/{{.CI_COMMIT_TAG}}"
       - "aws s3 sync dist s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest"
 
+  # in this example, we read from two different data sources to ensure up to date documentation
+  docs:
+    description:
+    variables:
+      # run the go command to generate help text from cobra
+      HELP_TEXT: "{{EXEC 'go run . -h'}}"
+      TASK_FILE: "{{ReadFile `taskfile.yaml`}}"
+    commands:
+      # expand the file, and pipe to write, if no errors default to the string "success"
+      - "echo {{ExpandFile `_docs/README.tmpl` | WriteFile `README.md` | default `success`}}"
+
   login:
     description: checkout temporary aws access keys
     commands:
