@@ -24,7 +24,7 @@ deploy:
   stage: deploy
   script:
     - ./dist/linux/tasks run install
-    - eval $(tasks run login --log false)
+    - eval $(tasks run login -s)
     - tasks run publish
   only: [master]
   except: { changes: ["*.md"] }
