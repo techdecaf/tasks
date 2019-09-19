@@ -5,49 +5,48 @@ import (
 	"os"
 	"path"
 
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"github.com/techdecaf/cgen/app"
 )
 
 // Plugin structure for zsh
 type Plugin struct {
-	name   string
-	path   string
-	script string
+	name string
+	path string
+}
+
+func (plug *Plugin) script() string {
+	return path.Join(plug.path, fmt.Sprintf("_%s", plug.name))
 }
 
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
 	Use:   "completion",
-	Short: "generates a zsh plugin with completion scripts",
-	Long:  `generates a zsh plugin with completion scripts`,
+	Short: "Generates zsh completion scripts",
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		plugin := &Plugin{}
-		home, err := homedir.Dir()
-		if err != nil {
-			log.Fatal("completion", err)
+		zsh := os.Getenv("ZSH")
+		if zsh == "" {
+			app.Log.Fatal("completion", fmt.Errorf("could not find the ZSH environmental variable, is ZSH installed?"))
 		}
 
-		plugin.name = rootCmd.Name()
-		plugin.path = path.Join(home, ".oh-my-zsh/plugins/", plugin.name)
-		plugin.script = path.Join(plugin.path, fmt.Sprintf("_%s", plugin.name))
+		plugin := &Plugin{
+			name: rootCmd.Name(),
+			path: path.Join(zsh, "/completions"),
+		}
 
 		if _, err := os.Stat(plugin.path); os.IsNotExist(err) {
 			os.MkdirAll(plugin.path, 0700)
 		}
 
-		if err := rootCmd.GenZshCompletionFile(plugin.script); err != nil {
-			log.Fatal("completion", err)
+		if err := rootCmd.GenZshCompletionFile(plugin.script()); err != nil {
+			app.Log.Fatal("completion", err)
 		}
 
 		fmt.Printf("a zsh completion file has been generated in %s \n", plugin.path)
 		fmt.Println()
-		fmt.Printf("to utilize the plugin, please add %s to the plugins section of your \n", plugin.name)
-		fmt.Println(".zshrc file, and add add `compinit` to the bottom .zshrc file")
-		fmt.Println()
-		fmt.Println(".zshrc")
-		fmt.Printf("065: `plugins( %s )`\n", plugin.name)
-		fmt.Println("EoF: `compinit`")
+		fmt.Println("to utilize the plugin, please add 'compinit' to the end of your .zshrc file")
+
 	},
 }
 
