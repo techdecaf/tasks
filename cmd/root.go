@@ -5,9 +5,6 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-
-	homedir "github.com/mitchellh/go-homedir"
-	"github.com/spf13/viper"
 )
 
 // VERSION is converted to the git tag at compile time using the make build command.
@@ -45,7 +42,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tasks.yaml)")
+	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tasks.yaml)")
 	rootCmd.PersistentFlags().BoolP("silent", "s", false, "suppress log messages <overrides log option in taskfile.yaml>")
 
 	rootCmd.PersistentFlags().StringP("task-file", "f", "", "use a specific taskfile.")
@@ -57,26 +54,26 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+	// if cfgFile != "" {
+	// 	// Use config file from the flag.
+	// 	viper.SetConfigFile(cfgFile)
+	// } else {
+	// 	// Find home directory.
+	// 	home, err := homedir.Dir()
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 		os.Exit(1)
+	// 	}
 
-		// Search config in home directory with name ".tasks" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".tasks")
-	}
+	// 	// Search config in home directory with name ".tasks" (without extension).
+	// 	viper.AddConfigPath(home)
+	// 	viper.SetConfigName(".tasks")
+	// }
 
-	viper.AutomaticEnv() // read in environment variables that match
+	// viper.AutomaticEnv() // read in environment variables that match
 
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
+	// // If a config file is found, read it in.
+	// if err := viper.ReadInConfig(); err == nil {
+	// 	fmt.Println("Using config file:", viper.ConfigFileUsed())
+	// }
 }
