@@ -51,7 +51,6 @@ variables:
   CI_COMMIT_TAG: "{{EXEC ~~git describe --tags --always --dirty --abbrev=0~~}}"
   CI_COMMIT_REF_NAME: "{{EXEC ~~git rev-parse --abbrev-ref HEAD~~}}"
   CI_COMMIT_SHA: "{{EXEC ~~git rev-parse HEAD~~}}"
-  S3_BUCKET: github.techdecaf.io
 
 tasks:
   default:
