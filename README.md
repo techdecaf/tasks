@@ -1,56 +1,79 @@
+# tasks
+
 <p align="center">
-  <img alt="cgen" src="https://images.techdecaf.com/fit-in/100x/tiny/tasks-logo.png" width="100" />
+  <img
+    alt="tasks"
+    src="https://images.techdecaf.com/fit-in/100x/techdecaf/tasks_logo.png"
+    width="100"
+  />
 </p>
 
-# Tasks
 
-Tasks is a task runner written in GO. Designed to be a simple task runner supporting both local development and ci/cd pipelines.
+- [tasks](#ciprojectname)
+  - [Download and Install](#download-and-install)
+  - [Quick Start](#quick-start)
+  - [Contribution Guide](#contribution-guide)
+  - [Credits](#credits)
 
-- [Tasks](#tasks)
-  - [Installing Tasks](#installing-tasks)
-  - [Using Tasks](#using-tasks)
-    - [Quick Start](#quick-start)
-    - [taskfile.yaml](#taskfileyaml)
-    - [Go Template Options](#go-template-options)
-  - [CLI Options](#cli-options)
-  - [Variables](#variables)
-- [Credits](#credits)
-  - [Application Design](#application-design)
-  - [Logo](#logo)
-  - [Sponsor](#sponsor)
-
-## Installing Tasks
+## Download and Install
 
 ```bash
 sh -c "$(curl -fsSL https://raw.github.com/techdecaf/tasks/master/install.sh)"
 ```
 
-## Using Tasks
+Download Links
 
-### Quick Start
+- [windows](http://github.techdecaf.io/tasks/latest/windows/tasks.exe)
+- [mac](http://github.techdecaf.io/tasks/latest/latest/darwin/tasks)
+- [linux](http://github.techdecaf.io/tasks/latest/latest/linux/tasks)
 
-1. [install tasks](#installing-tasks)
+To install tasks, use the provided script, simlink it or place it in any directory that is part of your path.
+i.e. `/usr/local/bin` or `c:\windows`
+
+
+## Quick Start
+
+```text
+Tasks is a task runner written in GO. Designed to be a simple task runner supporting both local development and ci/cd pipelines.
+
+Usage:
+  tasks [command]
+
+Available Commands:
+  completion  Generates zsh completion scripts
+  exec        execute a command using all resolved variables from your taskfile.yaml
+  export      Resolves all global variables and prints an export script
+  help        Help about any command
+  init        initialize a task file in the current directory.
+  list        list available commands and their descriptions from your taskfile.yaml
+  run         runs a list of tasks as defined in your taskfile.yaml
+
+Flags:
+  -h, --help     help for tasks
+  -t, --toggle   Help message for toggle
+
+Use "tasks [command] --help" for more information about a command.
+```
+
+1. [install tasks](#download-and-install)
 2. create a taskfile.yaml in the root of your project
 3. `tasks run task2` with the following yaml would result in task 1, then task2 running.
 
-```yaml
+```text
 options:
   log: true # debug, info, error, silent
 
-# variables are resolved in the following order:
-# variables declared as part of tasks
-# environmental variables that exist before the task is run
-# global variables listed here.
 variables:
-  CI_PROJECT_NAME: tasks
-  CI_COMMIT_TAG: "{{EXEC `git describe --tags --always --dirty --abbrev=0`}}"
-  CI_COMMIT_REF_NAME: "{{EXEC `git rev-parse --abbrev-ref HEAD`}}"
-  CI_COMMIT_SHA: "{{EXEC `git rev-parse HEAD`}}"
+  CI_PROJECT_NAME: "{{EXEC `echo ${PWD##*/}`}}"
+  CI_COMMIT_TAG: "{{TRY `git describe --tags --always --dirty --abbrev=0`}}"
+  CI_COMMIT_REF_NAME: "{{TRY `git rev-parse --abbrev-ref HEAD`}}"
+  CI_COMMIT_SHA: "{{TRY `git rev-parse HEAD`}}"
   S3_BUCKET: github.techdecaf.io
+  DOWNLOAD_URI: http://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest
 
 tasks:
   default:
-    description: runs when no other tasks have been specified.`
+    description: is the task that runs when no tasks have been specified. `tasks run` == `tasks run default`
     commands: [tasks list]
 
   dependencies:
@@ -78,26 +101,25 @@ tasks:
       - "cp dist/{{OS}}/{{.CI_PROJECT_NAME}} /usr/local/bin"
 
   publish:
-    description: publishes built files to s3 for deployment
+    description: moves compiled files to /usr/local/bin/
     commands:
       - "aws s3 sync dist s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/{{.CI_COMMIT_TAG}}"
       - "aws s3 sync dist s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest"
-
-  # in this example, we read from two different data sources to ensure up to date documentation
-  docs:
-    description:
-    variables:
-      # run the go command to generate help text from cobra
-      HELP_TEXT: "{{EXEC 'go run . -h'}}"
-      TASK_FILE: "{{ReadFile `taskfile.yaml`}}"
-    commands:
-      # expand the file, and pipe to write, if no errors default to the string "success"
-      - "echo {{ExpandFile `_docs/README.tmpl` | WriteFile `README.md` | default `success`}}"
 
   login:
     description: checkout temporary aws access keys
     commands:
       - curl -s "$DECAF_URL/keys/aws/set/env/linux/website-update?jwt=$DECAF_TOKEN"
+
+  docs:
+    description: auto generate documentation
+    commands:
+      # expand the file, and pipe to write, if no errors default to the string "success"
+      - "echo {{ExpandFile `docs/README.md` | WriteFile `README.md` | default `docs updated`}}"
+
+  upgrade:
+    description: upgrade project from cgen template
+    commands: ["cgen upgrade"]
 
 ```
 
@@ -124,18 +146,22 @@ variables are resolved in the following order:
 2. environmental variables that exist before the task is run
 3. global variables listed in the taskfile.yaml
 
-# Credits
 
-## Application Design
+## Contribution Guide
+
+## Credits
+
+### Application Design
 
 Application design taken from [go-task](https://github.com/go-task/task). Lots of key design elements come from this project, the only reason to roll our own was a fundamental breaking change on how to handle variables.
 
-## Logo
+### Logo
 
 The logo for this project provided by [logomakr](https://logomakr.com)
 
-## Sponsor
+### Sponsor
 
 [![TechDecaf](https://images.techdecaf.com/fit-in/150x/techdecaf/logo_full.png)](https://techdecaf.com)
 
 _Get back to doing what you do best, let us handle the rest._
+

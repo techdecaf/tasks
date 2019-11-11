@@ -1,3 +1,7 @@
+### Application Design
+
+Application design taken from [go-task](https://github.com/go-task/task). Lots of key design elements come from this project, the only reason to roll our own was a fundamental breaking change on how to handle variables.
+
 ### Logo
 
 The logo for this project provided by [logomakr](https://logomakr.com)
