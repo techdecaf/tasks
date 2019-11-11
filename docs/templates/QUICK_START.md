@@ -1,0 +1,1 @@
+Tasks is a task runner written in GO. Designed to be a simple task runner supporting both local development and ci/cd pipelines.

@@ -1,20 +1,17 @@
 options:
   log: true # debug, info, error, silent
 
-# variables are resolved in the following order:
-# variables declared as part of tasks
-# environmental variables that exist before the task is run
-# global variables listed here.
 variables:
-  CI_PROJECT_NAME: tasks
-  CI_COMMIT_TAG: "{{EXEC `git describe --tags --always --dirty --abbrev=0`}}"
-  CI_COMMIT_REF_NAME: "{{EXEC `git rev-parse --abbrev-ref HEAD`}}"
-  CI_COMMIT_SHA: "{{EXEC `git rev-parse HEAD`}}"
+  CI_PROJECT_NAME: "{{EXEC `echo ${PWD##*/}`}}"
+  CI_COMMIT_TAG: "{{TRY `git describe --tags --always --dirty --abbrev=0`}}"
+  CI_COMMIT_REF_NAME: "{{TRY `git rev-parse --abbrev-ref HEAD`}}"
+  CI_COMMIT_SHA: "{{TRY `git rev-parse HEAD`}}"
   S3_BUCKET: github.techdecaf.io
+  DOWNLOAD_URI: http://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest
 
 tasks:
   default:
-    description: runs when no other tasks have been specified.`
+    description: is the task that runs when no tasks have been specified. `tasks run` == `tasks run default`
     commands: [tasks list]
 
   dependencies:
@@ -42,23 +39,22 @@ tasks:
       - "cp dist/{{OS}}/{{.CI_PROJECT_NAME}} /usr/local/bin"
 
   publish:
-    description: publishes built files to s3 for deployment
+    description: moves compiled files to /usr/local/bin/
     commands:
       - "aws s3 sync dist s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/{{.CI_COMMIT_TAG}}"
       - "aws s3 sync dist s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest"
-
-  # in this example, we read from two different data sources to ensure up to date documentation
-  docs:
-    description:
-    variables:
-      # run the go command to generate help text from cobra
-      HELP_TEXT: "{{EXEC 'go run . -h'}}"
-      TASK_FILE: "{{ReadFile `taskfile.yaml`}}"
-    commands:
-      # expand the file, and pipe to write, if no errors default to the string "success"
-      - "echo {{ExpandFile `_docs/README.tmpl` | WriteFile `README.md` | default `success`}}"
 
   login:
     description: checkout temporary aws access keys
     commands:
       - curl -s "$DECAF_URL/keys/aws/set/env/linux/website-update?jwt=$DECAF_TOKEN"
+
+  docs:
+    description: auto generate documentation
+    commands:
+      # expand the file, and pipe to write, if no errors default to the string "success"
+      - "echo {{ExpandFile `docs/README.md` | WriteFile `README.md` | default `docs updated`}}"
+
+  upgrade:
+    description: upgrade project from cgen template
+    commands: ["cgen upgrade"]
