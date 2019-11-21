@@ -7,16 +7,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// VERSION is converted to the git tag at compile time using the make build command.
+var VERSION string
+
 var cfgFile string
 
-// rootCmd represents the base command when called without any sub commands
+// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "tasks",
-	Short: "Tasks is a task runner written in GO. Designed to be a simple task runner supporting both local development and ci/cd pipelines.",
-	Long:  `Tasks is a task runner written in GO. Designed to be a simple task runner supporting both local development and ci/cd pipelines.`,
+	Short: "runs a list of tasks as defined in your taskfile.yaml",
+	Long:  `runs a list of tasks as defined in your taskfile.yaml`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		if ver, _ := cmd.Flags().GetBool("version"); ver {
+			fmt.Println(VERSION)
+		}
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
