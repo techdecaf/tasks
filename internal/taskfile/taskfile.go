@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/techdecaf/golog"
@@ -49,7 +49,7 @@ type TaskFile struct {
 func (tasks *TaskFile) Init() (err error) {
 	if tasks.FilePath == "" {
 		// use current working directory to get taskfile
-		tasks.FilePath = path.Join(pwd, "taskfile.yaml")
+		tasks.FilePath = filepath.Join(pwd, "taskfile.yaml")
 	}
 
 	// ensure taskfile file exists

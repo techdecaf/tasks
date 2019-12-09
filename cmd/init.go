@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -17,7 +17,7 @@ var initCmd = &cobra.Command{
 	Long:  `initialize a task file in the current directory.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		pwd, _ := os.Getwd()
-		taskfilePath := path.Join(pwd, "taskfile.yaml")
+		taskfilePath := filepath.Join(pwd, "taskfile.yaml")
 		taskfileSample = strings.ReplaceAll(taskfileSample, "~~", "`")
 
 		if _, err := os.Stat(taskfilePath); os.IsNotExist(err) {
