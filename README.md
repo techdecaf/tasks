@@ -21,9 +21,13 @@
 sh -c "$(curl -fsSL https://raw.github.com/techdecaf/tasks/master/install.sh)"
 ```
 
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.github.com/techdecaf/tasks/master/install.ps1'))
+```
+
 Download Links
 
-- [windows](http://github.techdecaf.io/tasks/latest/windows/tasks.exe)
+- [windows](http://github.techdecaf.io/tasks/latest/latest/windows/tasks.exe)
 - [mac](http://github.techdecaf.io/tasks/latest/latest/darwin/tasks)
 - [linux](http://github.techdecaf.io/tasks/latest/latest/linux/tasks)
 
@@ -34,9 +38,10 @@ i.e. `/usr/local/bin` or `c:\windows`
 ## Quick Start
 
 ```text
-Tasks is a task runner written in GO. Designed to be a simple task runner supporting both local development and ci/cd pipelines.
+runs a list of tasks as defined in your taskfile.yaml
 
 Usage:
+  tasks [flags]
   tasks [command]
 
 Available Commands:
@@ -49,8 +54,10 @@ Available Commands:
   run         runs a list of tasks as defined in your taskfile.yaml
 
 Flags:
-  -h, --help     help for tasks
-  -t, --toggle   Help message for toggle
+  -h, --help               help for tasks
+  -s, --silent             suppress log messages <overrides log option in taskfile.yaml>
+  -f, --task-file string   use a specific taskfile.
+  -v, --version            Prints application version
 
 Use "tasks [command] --help" for more information about a command.
 ```

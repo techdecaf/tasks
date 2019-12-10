@@ -4,10 +4,12 @@
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
-
 cache:
-  paths:
-    - $CI_PROJECT_DIR/dist
+  paths: [$CI_PROJECT_DIR/dist]
+
+before_script:
+  - apk add git curl
+  - sh -c "$(curl -fsSL https://raw.github.com/techdecaf/tasks/master/install.sh)"
 
 stages: [test, deploy]
 
@@ -15,16 +17,15 @@ test:
   image: golang:1.13-alpine
   stage: test
   script:
-    - apk add git
+    - tasks run integration
     - go run . list
-    - go run . run build
+    - go run . run build install
 
 deploy:
   image: techdecaf/ci:v1.3.0
   stage: deploy
   script:
-    - ./dist/linux/tasks run install
-    - eval $(tasks run login -s)
+    - eval $(tasks run login --log false)
     - tasks run publish
   only: [master]
   except: { changes: ["*.md"] }
