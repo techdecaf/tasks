@@ -39,5 +39,8 @@ var runCmd = &cobra.Command{
 }
 
 func init() {
+	var variables map[string]string
+	
 	rootCmd.AddCommand(runCmd)
+	runCmd.Flags().StringToStringVar(&variables, "env", nil, "overwrite task variables")
 }

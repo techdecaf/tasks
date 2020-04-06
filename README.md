@@ -3,7 +3,7 @@
 <p align="center">
   <img
     alt="tasks"
-    src="https://images.techdecaf.com/fit-in/100x/techdecaf/tasks_logo.png"
+    src="https://images.techdecaf.com/fit-in/100x/tiny/tasks-logo.png"
     width="100"
   />
 </p>
@@ -127,6 +127,10 @@ tasks:
   upgrade:
     description: upgrade project from cgen template
     commands: ["cgen upgrade"]
+
+  env:
+    description: testing overriding specific variables using --env
+    commands: [echo foo:$foo, echo bar:$bar]
 
 ```
 

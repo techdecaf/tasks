@@ -58,3 +58,7 @@ tasks:
   upgrade:
     description: upgrade project from cgen template
     commands: ["cgen upgrade"]
+
+  env:
+    description: testing overriding specific variables using --env
+    commands: [echo foo:$foo, echo bar:$bar]
