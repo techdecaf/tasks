@@ -6,7 +6,8 @@ set -e
 # install constants
 export APP_NAME=tasks
 export BUCKET_URL=http://github.techdecaf.io
-export INSTALL_PATH=/usr/local/bin
+# export INSTALL_PATH=/usr/local/bin
+export INSTALL_PATH=${INSTALL_PATH:-"/usr/local/bin"}
 
 # export os as lowercase string
 export OS=$(echo $(uname) | tr '[:upper:]' '[:lower:]')
