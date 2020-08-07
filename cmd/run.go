@@ -1,7 +1,10 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
+	"github.com/techdecaf/templates"
 )
 
 // runCmd represents the run command
@@ -14,6 +17,11 @@ var runCmd = &cobra.Command{
 		// root flags
 		if file, _ := cmd.Flags().GetString("task-file"); file != "" {
 			tasks.FilePath = file
+		}
+
+		cliVars, err  := cmd.Flags().GetStringToString("variable")
+		if err != nil {
+			log.Fatal("failed to set cli variables", err)
 		}
 
 		if len(args) == 0 {
@@ -29,6 +37,17 @@ var runCmd = &cobra.Command{
 			tasks.Options.LogLevel = false
 		}
 
+		for key, val := range cliVars {
+			err := tasks.TemplateVars.Set(templates.Variable{
+				Key: key,
+				Value: val,
+				OverrideEnv: true,
+			})
+			if err != nil {
+				log.Fatal(fmt.Sprintf("could not set variable %s = %s", key, val), err)
+			}
+		}
+		
 		for _, task := range args {
 			if err := tasks.Run(task); err != nil {
 				log.Fatal(task, err)
@@ -42,5 +61,5 @@ func init() {
 	var variables map[string]string
 	
 	rootCmd.AddCommand(runCmd)
-	runCmd.Flags().StringToStringVar(&variables, "env", nil, "overwrite task variables")
+	runCmd.Flags().StringToStringVarP(&variables, "variable", "v" , nil, "overwrite environmental variables")
 }

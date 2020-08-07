@@ -42,7 +42,7 @@ type TaskFile struct {
 	FilePath  string
 
 	// private
-	variables templates.Variables
+	TemplateVars templates.Variables
 }
 
 // Init function
@@ -74,9 +74,9 @@ func (tasks *TaskFile) Init() (err error) {
 	}
 
 	for _, item := range tasks.Variables {
-		tasks.variables.List = append(tasks.variables.List, map2var(item, false))
+		tasks.TemplateVars.List = append(tasks.TemplateVars.List, map2var(item, false))
 	}
-	if err := tasks.variables.Init(); err != nil {
+	if err := tasks.TemplateVars.Init(); err != nil {
 		return err
 	}
 
@@ -89,7 +89,7 @@ func (tasks *TaskFile) Init() (err error) {
 
 // Execute a command using all variables resolved in the taskfile
 func (tasks *TaskFile) Execute(cmd, name, dir string) (out string, err error) {
-	command, err := templates.Expand(cmd, tasks.variables.Functions)
+	command, err := templates.Expand(cmd, tasks.TemplateVars.Functions)
 	if err != nil {
 		return "", err
 	}
@@ -121,7 +121,7 @@ func (tasks *TaskFile) Run(key string) error {
 	// resolve variables
 	if len(task.Variables) > 0 {
 		for _, v := range task.Variables {
-			tasks.variables.Set(map2var(v, true))
+			tasks.TemplateVars.Set(map2var(v, true))
 		}
 	}
 
@@ -142,7 +142,7 @@ func (tasks *TaskFile) Run(key string) error {
 // List - all task descriptions
 func (tasks *TaskFile) List() {
 	fmt.Println("variables:")
-	for _, v := range tasks.variables.List {
+	for _, v := range tasks.TemplateVars.List {
 		fmt.Printf("%s%s: %s\n", spaces(4), v.Key, os.Getenv(v.Key))
 	}
 
@@ -154,7 +154,7 @@ func (tasks *TaskFile) List() {
 
 // Export variables for use in other applications.
 func (tasks *TaskFile) Export() {
-	for _, v := range tasks.variables.List {
+	for _, v := range tasks.TemplateVars.List {
 		fmt.Printf("export %s=%s\n", v.Key, os.Getenv(v.Key))
 	}
 }

@@ -8,12 +8,18 @@
   />
 </p>
 
-
-- [tasks](#ciprojectname)
+- [tasks](#tasks)
   - [Download and Install](#download-and-install)
   - [Quick Start](#quick-start)
+    - [taskfile.yaml](#taskfileyaml)
+    - [Go Template Options](#go-template-options)
+  - [CLI Options](#cli-options)
+  - [Variables](#variables)
   - [Contribution Guide](#contribution-guide)
   - [Credits](#credits)
+    - [Application Design](#application-design)
+    - [Logo](#logo)
+    - [Sponsor](#sponsor)
 
 ## Download and Install
 
@@ -33,7 +39,6 @@ Download Links
 
 To install tasks, use the provided script, simlink it or place it in any directory that is part of your path.
 i.e. `/usr/local/bin` or `c:\windows`
-
 
 ## Quick Start
 
@@ -154,9 +159,9 @@ variables are run in order, and also mapped to the environment, so you can feel 
 variables are resolved in the following order:
 
 1. local variables declared as part of a task
-2. environmental variables that exist before the task is run
-3. global variables listed in the taskfile.yaml
-
+2. cli variables specific with `tasks run mytask --variable "MY_KEY=my value"`
+3. environmental variables that exist before the task is run
+4. global variables listed in the taskfile.yaml
 
 ## Contribution Guide
 
@@ -175,4 +180,3 @@ The logo for this project provided by [logomakr](https://logomakr.com)
 [![TechDecaf](https://images.techdecaf.com/fit-in/150x/techdecaf/logo_full.png)](https://techdecaf.com)
 
 _Get back to doing what you do best, let us handle the rest._
-
