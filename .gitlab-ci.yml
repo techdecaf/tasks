@@ -1,31 +1,39 @@
 # FULL DOCUMENTATION CAN BE FOUND HERE: #https://docs.gitlab.com/ce/ci/yaml/
 
-# image: golang:1.13-alpine
+image: golang:1.13-stretch
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
-cache:
-  paths: [$CI_PROJECT_DIR/dist]
+# cache:
+#   paths: [$CI_PROJECT_DIR/dist]
 
 before_script:
-  - apk add git curl
+  # - apk add git curl
   - sh -c "$(curl -fsSL https://raw.github.com/techdecaf/tasks/master/install.sh)"
+  - eval $(tasks run login -s)
 
-stages: [test, deploy]
+stages: [test, upload, publish]
 
 test:
-  image: golang:1.13-alpine
   stage: test
-  script:
-    - tasks run integration
-    - go run . list
-    - go run . run build install
+  script: [tasks run coverage test build]
+  coverage: /All files\s*\|\s*([\d\.]+)/
+  artifacts:
+    paths: [build/]
+    expire_in: 1 week
+  only: [branches, tags]
+  except: [master]
 
-deploy:
-  image: techdecaf/ci:v1.3.0
-  stage: deploy
-  script:
-    - eval $(tasks run login --log false)
-    - tasks run publish
-  only: [master]
-  except: { changes: ["*.md"] }
+upload:
+  stage: upload
+  image: techdecaf/ci:latest
+  script: [tasks run upload]
+  only: [/^v\d+.\d+.\d+/]
+  except: [branches]
+
+publish:
+  stage: publish
+  image: techdecaf/ci:latest
+  script: [tasks run publish]
+  only: [/^v\d+.\d+.\d+$/]
+  except: [branches]

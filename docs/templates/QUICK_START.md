@@ -2,11 +2,11 @@
 2. create a taskfile.yaml in the root of your project
 3. `tasks run task2` with the following yaml would result in task 1, then task2 running.
 
+### taskfile.yaml
+
 ```text
 {{ ReadFile `taskfile.yaml` }}
 ```
-
-### taskfile.yaml
 
 ### Go Template Options
 
