@@ -77,10 +77,10 @@ tasks:
     description: upgrade project from cgen template
     commands: ["cgen upgrade"]
 
-  coverage:
-    description: run test coverage
-    commands:
-      - "go test ./app -coverprofile coverage.out && go tool cover -func=coverage.out"
+  # coverage:
+  #   description: run test coverage
+  #   commands:
+  #     - "go test ./app -coverprofile coverage.out && go tool cover -func=coverage.out"
 
   pre-release:
     description: bump patch version and release for deployment
