@@ -66,16 +66,27 @@ Use "tasks [command] --help" for more information about a command.
 2. create a taskfile.yaml in the root of your project
 3. `tasks run task2` with the following yaml would result in task 1, then task2 running.
 
+### taskfile.yaml
+
 ```text
 options:
   log: true # debug, info, error, silent
 
+
+# all task variables are environmental variables, if they do not already exist in the current
+# environment, then you can set them here using the golang template syntax
 variables:
-  CI_PROJECT_NAME: "{{PWD | base}}"
+  # Get the current working directory and extract the base path
+  CI_PROJECT_NAME: "{{PWD | base}}" # === tasks
+  # TRY to execute git describe --tags, defaults to an empty string
   CI_COMMIT_TAG: "{{TRY `git describe --tags --always --dirty --abbrev=0`}}"
+  # TRY to get the current branch name using git rev-parse
   CI_COMMIT_REF_NAME: "{{TRY `git rev-parse --abbrev-ref HEAD`}}"
+  # TRY to get the current commit sha
   CI_COMMIT_SHA: "{{TRY `git rev-parse HEAD`}}"
+  # Sets a static value
   S3_BUCKET: github.techdecaf.io
+  # use the dot variable syntax to template the following url from variables
   DOWNLOAD_URI: http://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest
 
 tasks:
@@ -93,25 +104,27 @@ tasks:
     variables:
       flags: build -ldflags "-X main.VERSION={{.CI_COMMIT_TAG}}"
     commands:
-      - GOOS=darwin go {{.flags}} -o dist/darwin/{{.CI_PROJECT_NAME}} -v
-      - GOOS=linux go {{.flags}} -o dist/linux/{{.CI_PROJECT_NAME}} -v
-      - GOOS=windows go {{.flags}} -o dist/windows/{{.CI_PROJECT_NAME}}.exe -v
+      - GOOS=darwin go {{.flags}} -o build/darwin/{{.CI_PROJECT_NAME}} -v
+      - GOOS=linux go {{.flags}} -o build/linux/{{.CI_PROJECT_NAME}} -v
+      - GOOS=windows go {{.flags}} -o build/windows/{{.CI_PROJECT_NAME}}.exe -v
 
   clean:
     description: removes all files listed in .gitignore
-    commands: ["rm -rf dist"]
+    commands: ["rm -rf build temp"]
 
   install:
     description: installs locally to /usr/local/bin
     commands:
-      - "chmod +x dist/{{OS}}/{{.CI_PROJECT_NAME}}"
-      - "cp dist/{{OS}}/{{.CI_PROJECT_NAME}} /usr/local/bin"
+      - "chmod +x build/{{OS}}/{{.CI_PROJECT_NAME}}"
+      - "cp build/{{OS}}/{{.CI_PROJECT_NAME}} /usr/local/bin"
+
+  upload:
+    description: moves compiled files to /usr/local/bin/
+    commands: ["aws s3 sync build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/{{.CI_COMMIT_TAG}}"]
 
   publish:
-    description: moves compiled files to /usr/local/bin/
-    commands:
-      - "aws s3 sync dist s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/{{.CI_COMMIT_TAG}}"
-      - "aws s3 sync dist s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest"
+    description: publish new stable version under the `latest` tag
+    commands: ["aws s3 sync build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest"]
 
   login:
     description: checkout temporary aws access keys
@@ -124,17 +137,49 @@ tasks:
       # expand the file, and pipe to write, if no errors default to the string "success"
       - "echo {{ExpandFile `docs/README.md` | WriteFile `README.md` | default `docs updated`}}"
 
+  test:
+    description: run tests
+    pre: [clean]
+    commands:
+      - go run . help
+      - go run . list
+
   upgrade:
     description: upgrade project from cgen template
     commands: ["cgen upgrade"]
 
-  env:
-    description: testing overriding specific variables using --env
-    commands: [echo foo:$foo, echo bar:$bar]
+  # coverage:
+  #   description: run test coverage
+  #   commands:
+  #     - "go test ./app -coverprofile coverage.out && go tool cover -func=coverage.out"
+
+  pre-release:
+    description: bump patch version and release for deployment
+    commands:
+      - cgen bump --level pre-release
+      - git push --follow-tags --no-verify
+
+  release-patch:
+    description: bump patch version and release for deployment
+    commands:
+      - cgen bump --level patch
+      - git push --follow-tags --no-verify
+
+  release-minor:
+    description: bump minor version and release for deployment
+    commands:
+      - cgen bump --level minor
+      - git push --follow-tags --no-verify
+
+  upgrade:
+    description: upgrade the current project
+    commands: [cgen upgrade, yarn upgrade --latest]
+
+  oops:
+    description: undo last commit
+    commands: [git reset HEAD~1]
 
 ```
-
-### taskfile.yaml
 
 ### Go Template Options
 
