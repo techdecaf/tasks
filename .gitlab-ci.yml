@@ -1,6 +1,6 @@
 # FULL DOCUMENTATION CAN BE FOUND HERE: #https://docs.gitlab.com/ce/ci/yaml/
 
-image: golang:1.13-stretch
+image: golang:1.14-alpine
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
@@ -8,7 +8,7 @@ image: golang:1.13-stretch
 #   paths: [$CI_PROJECT_DIR/dist]
 
 before_script:
-  # - apk add git curl
+  - apk add git curl
   - sh -c "$(curl -fsSL https://raw.github.com/techdecaf/tasks/master/install.sh)"
   - eval $(tasks run login -s)
 
