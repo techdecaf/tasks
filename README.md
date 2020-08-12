@@ -27,9 +27,9 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.We
 
 Download Links
 
-- [windows](http://github.techdecaf.io/tasks/latest/latest/windows/tasks.exe)
-- [mac](http://github.techdecaf.io/tasks/latest/latest/darwin/tasks)
-- [linux](http://github.techdecaf.io/tasks/latest/latest/linux/tasks)
+- [windows](http://github.techdecaf.io/tasks/latest/windows/tasks.exe)
+- [mac](http://github.techdecaf.io/tasks/latest/darwin/tasks)
+- [linux](http://github.techdecaf.io/tasks/latest/linux/tasks)
 
 To install tasks, use the provided script, simlink it or place it in any directory that is part of your path.
 i.e. `/usr/local/bin` or `c:\windows`
@@ -77,7 +77,7 @@ options:
 # environment, then you can set them here using the golang template syntax
 variables:
   # Get the current working directory and extract the base path
-  CI_PROJECT_NAME: "{{PWD | base}}" # === tasks
+  CI_PROJECT_NAME: "{{ReadFile `.cgen.yaml` | YQ `answers.Name`}}" # === tasks
   # TRY to execute git describe --tags, defaults to an empty string
   CI_COMMIT_TAG: "{{TRY `git describe --tags --always --dirty --abbrev=0`}}"
   # TRY to get the current branch name using git rev-parse
@@ -87,7 +87,7 @@ variables:
   # Sets a static value
   S3_BUCKET: github.techdecaf.io
   # use the dot variable syntax to template the following url from variables
-  DOWNLOAD_URI: http://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest
+  DOWNLOAD_URI: http://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}
 
 tasks:
   default:

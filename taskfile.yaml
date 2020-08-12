@@ -16,7 +16,7 @@ variables:
   # Sets a static value
   S3_BUCKET: github.techdecaf.io
   # use the dot variable syntax to template the following url from variables
-  DOWNLOAD_URI: http://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest
+  DOWNLOAD_URI: http://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}
 
 tasks:
   default:
