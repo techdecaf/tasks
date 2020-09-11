@@ -6,8 +6,16 @@ set -e
 # install constants
 export APP_NAME=tasks
 export BUCKET_URL=http://github.techdecaf.io
-# export INSTALL_PATH=/usr/local/bin
 export INSTALL_PATH=${INSTALL_PATH:-"/usr/local/bin"}
+export INSTALL_VERSION=${INSTALL_VERSION:-"latest"}
+
+while getopts v:p: flag
+do
+  case "${flag}" in
+    v) INSTALL_VERSION=${OPTARG};;
+    p) INSTALL_PATH=${OPTARG};;
+  esac
+done
 
 # export os as lowercase string
 export OS=$(echo $(uname) | tr '[:upper:]' '[:lower:]')
@@ -18,7 +26,7 @@ if [[ "$OS" == "" ]]; then
 fi
 
 export APP_BINARY=/tmp/$APP_NAME
-export LATEST_STABLE=$BUCKET_URL/$APP_NAME/latest/$OS/$APP_NAME
+export LATEST_STABLE=$BUCKET_URL/$APP_NAME/$INSTALL_VERSION/$OS/$APP_NAME
 
 echo '[Installed] '$APP_NAME version: $($APP_NAME --version)
 echo '[Downloading]' $LATEST_STABLE && curl -fsSLo $APP_BINARY $LATEST_STABLE
