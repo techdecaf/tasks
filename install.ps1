@@ -15,4 +15,4 @@ Invoke-WebRequest -Uri "$LATEST_STABLE" -OutFile "$APP_BINARY"
 
 echo "[Validation] $APP_NAME version: $(&$APP_NAME --version)"
 
-cgen --help
+tasks --help
