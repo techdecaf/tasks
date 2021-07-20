@@ -14,7 +14,11 @@ var exportCmd = &cobra.Command{
 		if file, _ := cmd.Flags().GetString("task-file"); file != "" {
 			tasks.FilePath = file
 		}
-
+		cliVars, err := cmd.Flags().GetStringToString("variable")
+		if err != nil {
+			log.Fatal("failed to set cli variables", err)
+		}
+		SetEnvFrom(cliVars)
 		if err := tasks.Init(); err != nil {
 			log.Fatal("task_init", err)
 		}
@@ -24,4 +28,6 @@ var exportCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(exportCmd)
+	var variables map[string]string
+	exportCmd.Flags().StringToStringVarP(&variables, "variable", "v", nil, "overwrite environmental variables")
 }

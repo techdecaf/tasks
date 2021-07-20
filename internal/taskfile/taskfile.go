@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/techdecaf/golog"
@@ -154,8 +155,17 @@ func (tasks *TaskFile) List() {
 
 // Export variables for use in other applications.
 func (tasks *TaskFile) Export() {
+	var pattern string
+	switch runtime.GOOS {
+	case "windows":
+		pattern = "$env:%s='%s'"
+	case "darwin", "linux":
+		pattern = "export %s='%s'"
+	default:
+		log.Fatal("export", fmt.Errorf("unsupported platform %s", runtime.GOOS))
+	}
 	for _, v := range tasks.TemplateVars.List {
-		fmt.Printf("export %s=%s\n", v.Key, os.Getenv(v.Key))
+		fmt.Println(fmt.Sprintf(pattern, v.Key, os.Getenv(v.Key)))
 	}
 }
 

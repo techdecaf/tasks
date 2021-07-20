@@ -15,6 +15,12 @@ var listCmd = &cobra.Command{
 			tasks.FilePath = file
 		}
 
+		cliVars, err := cmd.Flags().GetStringToString("variable")
+		if err != nil {
+			log.Fatal("failed to set cli variables", err)
+		}
+		SetEnvFrom(cliVars)
+
 		if err := tasks.Init(); err != nil {
 			log.Fatal("task_list", err)
 		}
@@ -25,4 +31,7 @@ var listCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(listCmd)
+	var variables map[string]string
+	listCmd.Flags().StringToStringVarP(&variables, "variable", "v", nil, "overwrite environmental variables")
+
 }

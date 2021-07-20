@@ -8,7 +8,7 @@ variables:
   # Get the current working directory and extract the base path
   CI_PROJECT_NAME: "{{ReadFile `.cgen.yaml` | YQ `answers.Name`}}" # === tasks
   # TRY to execute git describe --tags, defaults to an empty string
-  CI_COMMIT_TAG: "{{TRY `git describe --tags --always --dirty --abbrev=0`}}"
+  CI_COMMIT_TAG: "{{TRY `git describe --tags --always --abbrev=0`}}"
   # TRY to get the current branch name using git rev-parse
   CI_COMMIT_REF_NAME: "{{TRY `git rev-parse --abbrev-ref HEAD`}}"
   # TRY to get the current commit sha
@@ -17,6 +17,8 @@ variables:
   S3_BUCKET: github.techdecaf.io
   # use the dot variable syntax to template the following url from variables
   DOWNLOAD_URI: http://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}
+  # generate a docker image based on the current version
+  DOCKER_IMAGE_TAG: techdecaf/tasks:{{.CI_COMMIT_TAG}}
 
 tasks:
   default:
@@ -37,6 +39,7 @@ tasks:
       - GOOS=darwin go {{.flags}} -o build/darwin/{{.CI_PROJECT_NAME}} -v
       - GOOS=linux go {{.flags}} -o build/linux/{{.CI_PROJECT_NAME}} -v
       - GOOS=windows go {{.flags}} -o build/windows/{{.CI_PROJECT_NAME}}.exe -v
+      - docker build . -t techdecaf/tasks:{{.CI_COMMIT_TAG}}
 
   clean:
     description: removes all files listed in .gitignore
