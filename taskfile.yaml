@@ -1,7 +1,6 @@
 options:
   log: true # debug, info, error, silent
 
-
 # all task variables are environmental variables, if they do not already exist in the current
 # environment, then you can set them here using the golang template syntax
 variables:
@@ -53,11 +52,15 @@ tasks:
 
   upload:
     description: moves compiled files to /usr/local/bin/
-    commands: ["aws s3 sync build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/{{.CI_COMMIT_TAG}}"]
+    commands:
+      [
+        "aws s3 sync build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/{{.CI_COMMIT_TAG}}",
+      ]
 
   publish:
     description: publish new stable version under the `latest` tag
-    commands: ["aws s3 sync build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest"]
+    commands:
+      ["aws s3 sync build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest"]
 
   login:
     description: checkout temporary aws access keys
@@ -86,27 +89,26 @@ tasks:
   #   commands:
   #     - "go test ./app -coverprofile coverage.out && go tool cover -func=coverage.out"
 
-  pre-release:
-    description: bump patch version and release for deployment
+  release:
+    description: bump version and release for deployment
     commands:
-      - cgen bump --level pre-release
-      - git push --follow-tags --no-verify
+      - cgen bump --level {{.type}} --push
+
+  pre-release:
+    description: bump the prerelease version and deploy skipping production
+    commands: [tasks run release --variable type=pre-release]
 
   release-patch:
-    description: bump patch version and release for deployment
-    commands:
-      - cgen bump --level patch
-      - git push --follow-tags --no-verify
-
-  release-minor:
     description: bump minor version and release for deployment
-    commands:
-      - cgen bump --level minor
-      - git push --follow-tags --no-verify
+    commands: [tasks run release --variable type=patch]
 
-  upgrade:
-    description: upgrade the current project
-    commands: [cgen upgrade, yarn upgrade --latest]
+  release-feature:
+    description: bump minor version and release for deployment
+    commands: [tasks run release --variable type=minor]
+
+  release-breaking-change:
+    description: bump major version and release for deployment
+    commands: [tasks run release --variable type=major]
 
   oops:
     description: undo last commit
