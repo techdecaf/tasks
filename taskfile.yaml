@@ -17,7 +17,7 @@ variables:
   # use the dot variable syntax to template the following url from variables
   DOWNLOAD_URI: http://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}
   # generate a docker image based on the current version
-  DOCKER_IMAGE_TAG: techdecaf/tasks:{{.CI_COMMIT_TAG}}
+  DOCKER_IMAGE_TAG: techdecaf/tasks:{{.CI_COMMIT_TAG | replace `v` ``}}
 
 tasks:
   default:
@@ -38,7 +38,7 @@ tasks:
       - GOOS=darwin go {{.flags}} -o build/darwin/{{.CI_PROJECT_NAME}} -v
       - GOOS=linux go {{.flags}} -o build/linux/{{.CI_PROJECT_NAME}} -v
       - GOOS=windows go {{.flags}} -o build/windows/{{.CI_PROJECT_NAME}}.exe -v
-      - docker build . -t techdecaf/tasks:{{.CI_COMMIT_TAG}}
+      - docker build . -t {{.DOCKER_IMAGE_TAG}}
 
   clean:
     description: removes all files listed in .gitignore
@@ -50,17 +50,12 @@ tasks:
       - "chmod +x build/{{OS}}/{{.CI_PROJECT_NAME}}"
       - "cp build/{{OS}}/{{.CI_PROJECT_NAME}} /usr/local/bin"
 
-  upload:
-    description: moves compiled files to /usr/local/bin/
-    commands:
-      [
-        "aws s3 sync build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/{{.CI_COMMIT_TAG}}",
-      ]
-
   publish:
-    description: publish new stable version under the `latest` tag
+    description: publish artifacts to S3
     commands:
-      ["aws s3 sync build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest"]
+      - "aws s3 sync --acl bucket-owner-full-control build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/{{.CI_COMMIT_TAG}}"
+      - "aws s3 sync --acl bucket-owner-full-control build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest"
+      - "docker push {{.DOCKER_IMAGE_TAG}}"
 
   login:
     description: checkout temporary aws access keys
