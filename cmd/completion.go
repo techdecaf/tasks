@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path"
 
 	"github.com/spf13/cobra"
-	"github.com/techdecaf/cgen/app"
 )
 
 // Plugin structure for zsh
@@ -27,7 +27,7 @@ var completionCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		zsh := os.Getenv("ZSH")
 		if zsh == "" {
-			app.Log.Fatal("completion", fmt.Errorf("could not find the ZSH environmental variable, is ZSH installed?"))
+			log.Fatal(fmt.Errorf("could not find the ZSH environmental variable, is ZSH installed?"))
 		}
 
 		plugin := &Plugin{
@@ -40,7 +40,7 @@ var completionCmd = &cobra.Command{
 		}
 
 		if err := rootCmd.GenZshCompletionFile(plugin.script()); err != nil {
-			app.Log.Fatal("completion", err)
+			log.Fatal(err)
 		}
 
 		fmt.Printf("a zsh completion file has been generated in %s \n", plugin.path)

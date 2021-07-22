@@ -15,7 +15,7 @@ func SetEnvFrom(variables map[string]string) {
 			OverrideEnv: true,
 		})
 		if err != nil {
-			log.Fatal(fmt.Sprintf("could not set variable %s = %s", key, val), err)
+			logger.Fatal(fmt.Sprintf("could not set variable %s = %s", key, val), err)
 		}
 	}
 }

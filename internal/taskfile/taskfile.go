@@ -16,7 +16,7 @@ import (
 )
 
 var pwd, _ = os.Getwd()
-var log = golog.Log{
+var logger = golog.Log{
 	Name: "tasks",
 }
 
@@ -96,7 +96,7 @@ func (tasks *TaskFile) Execute(cmd, name, dir string) (out string, err error) {
 	}
 
 	if tasks.Options.LogLevel {
-		log.Info(name, command)
+		logger.Info(name, command)
 	}
 
 	return templates.Run(templates.CommandOptions{
@@ -134,7 +134,7 @@ func (tasks *TaskFile) Run(key string) error {
 		}
 
 		if res != "" {
-			log.Info(key, res)
+			logger.Info(key, res)
 		}
 	}
 	return nil
@@ -162,7 +162,7 @@ func (tasks *TaskFile) Export() {
 	case "darwin", "linux":
 		pattern = "export %s='%s'"
 	default:
-		log.Fatal("export", fmt.Errorf("unsupported platform %s", runtime.GOOS))
+		logger.Fatal("export", fmt.Errorf("unsupported platform %s", runtime.GOOS))
 	}
 	for _, v := range tasks.TemplateVars.List {
 		fmt.Println(fmt.Sprintf(pattern, v.Key, os.Getenv(v.Key)))

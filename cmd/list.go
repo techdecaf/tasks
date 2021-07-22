@@ -17,12 +17,12 @@ var listCmd = &cobra.Command{
 
 		cliVars, err := cmd.Flags().GetStringToString("variable")
 		if err != nil {
-			log.Fatal("failed to set cli variables", err)
+			logger.Fatal("failed to set cli variables", err)
 		}
 		SetEnvFrom(cliVars)
 
 		if err := tasks.Init(); err != nil {
-			log.Fatal("task_list", err)
+			logger.Fatal("task_list", err)
 		}
 
 		tasks.List()

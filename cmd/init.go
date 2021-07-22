@@ -23,15 +23,15 @@ var initCmd = &cobra.Command{
 		if _, err := os.Stat(taskfilePath); os.IsNotExist(err) {
 			file, err := os.Create(taskfilePath)
 			if err != nil {
-				log.Fatal("init", err)
+				logger.Fatal("init", err)
 			}
 			defer file.Close()
 
 			if _, err = io.WriteString(file, SAMPLE_TASKFILE); err != nil {
-				log.Fatal("init", err)
+				logger.Fatal("init", err)
 			}
 		} else {
-			log.Fatal("init", fmt.Sprintf("taskfile already exists at %s, refusing to overwrite.", taskfilePath))
+			logger.Fatal("init", fmt.Sprintf("taskfile already exists at %s, refusing to overwrite.", taskfilePath))
 		}
 
 	},

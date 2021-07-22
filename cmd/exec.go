@@ -14,7 +14,7 @@ var execCmd = &cobra.Command{
 	Long:  `execute a command using all resolved variables from your taskfile.yaml`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			log.Fatal("exec", "no arguments passed to exec.")
+			logger.Fatal("exec", "no arguments passed to exec.")
 		}
 
 		// root flags
@@ -24,12 +24,12 @@ var execCmd = &cobra.Command{
 
 		cliVars, err := cmd.Flags().GetStringToString("variable")
 		if err != nil {
-			log.Fatal("failed to set cli variables", err)
+			logger.Fatal("failed to set cli variables", err)
 		}
 		SetEnvFrom(cliVars)
 
 		if err := tasks.Init(); err != nil {
-			log.Fatal("task_init", err)
+			logger.Fatal("task_init", err)
 		}
 
 		// handle flags
@@ -39,7 +39,7 @@ var execCmd = &cobra.Command{
 
 		out, err := tasks.Execute(strings.Join(args, " "), "exec", "")
 		if err != nil {
-			log.Fatal("taskfie.execute", err)
+			logger.Fatal("taskfie.execute", err)
 		}
 
 		fmt.Println(out)

@@ -18,7 +18,7 @@ var runCmd = &cobra.Command{
 
 		cliVars, err := cmd.Flags().GetStringToString("variable")
 		if err != nil {
-			log.Fatal("failed to set cli variables", err)
+			logger.Fatal("failed to set cli variables", err)
 		}
 		SetEnvFrom(cliVars)
 
@@ -27,7 +27,7 @@ var runCmd = &cobra.Command{
 		}
 
 		if err := tasks.Init(); err != nil {
-			log.Fatal("task_run", err)
+			logger.Fatal("task_run", err)
 		}
 
 		// handle flags
@@ -37,7 +37,7 @@ var runCmd = &cobra.Command{
 
 		for _, task := range args {
 			if err := tasks.Run(task); err != nil {
-				log.Fatal(task, err)
+				logger.Fatal(task, err)
 			}
 		}
 		// fmt.Println("run called with %n commands", len(args))

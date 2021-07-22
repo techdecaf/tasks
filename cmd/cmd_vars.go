@@ -5,7 +5,7 @@ import (
 	"github.com/techdecaf/tasks/internal/taskfile"
 )
 
-var log = golog.Log{
+var logger = golog.Log{
 	Name: "tasks",
 }
 
