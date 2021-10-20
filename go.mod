@@ -15,9 +15,9 @@ require (
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/spf13/cobra v1.2.1
 	github.com/techdecaf/golog v0.0.0-20190903162748-737582b5d4b8
-	github.com/techdecaf/templates v0.5.0
-	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
-	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
-	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b // indirect
+	github.com/techdecaf/templates v0.5.2
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
+	golang.org/x/sys v0.0.0-20211020174200-9d6173849985 // indirect
+	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )

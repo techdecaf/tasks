@@ -18,8 +18,8 @@ variables:
   DOWNLOAD_URI: http://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}
   # generate a docker image based on the current version
   DOCKER_IMAGE_TAG: techdecaf/tasks:{{.CI_COMMIT_TAG | replace `v` ``}}
-  # # find files using glob pattern in current directory matching which returns a list so we get the first element
-  # CGEN_YAML: "{{GlobMatch PWD `*cgen.yaml` | first}}"
+  # # find files using glob pattern in current directory matching which returns a list
+  INSTALL_SCRIPTS: "{{GlobMatch PWD `install.*` | join `|`}}"
 
 tasks:
   default:
