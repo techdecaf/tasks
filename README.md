@@ -72,14 +72,13 @@ Use "tasks [command] --help" for more information about a command.
 options:
   log: true # debug, info, error, silent
 
-
 # all task variables are environmental variables, if they do not already exist in the current
 # environment, then you can set them here using the golang template syntax
 variables:
   # Get the current working directory and extract the base path
   CI_PROJECT_NAME: "{{ReadFile `.cgen.yaml` | YQ `answers.Name`}}" # === tasks
   # TRY to execute git describe --tags, defaults to an empty string
-  CI_COMMIT_TAG: "{{TRY `git describe --tags --always --dirty --abbrev=0`}}"
+  CI_COMMIT_TAG: "{{TRY `git describe --tags --always --abbrev=0`}}"
   # TRY to get the current branch name using git rev-parse
   CI_COMMIT_REF_NAME: "{{TRY `git rev-parse --abbrev-ref HEAD`}}"
   # TRY to get the current commit sha
@@ -88,6 +87,10 @@ variables:
   S3_BUCKET: github.techdecaf.io
   # use the dot variable syntax to template the following url from variables
   DOWNLOAD_URI: http://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}
+  # generate a docker image based on the current version
+  DOCKER_IMAGE_TAG: techdecaf/tasks:{{.CI_COMMIT_TAG | replace `v` ``}}
+  # # find files using glob pattern in current directory matching which returns a list
+  INSTALL_SCRIPTS: "{{GlobMatch PWD `install.*` | join `|`}}"
 
 tasks:
   default:
@@ -103,10 +106,12 @@ tasks:
     pre: [clean, dependencies]
     variables:
       flags: build -ldflags "-X main.VERSION={{.CI_COMMIT_TAG}}"
+      GOARCH: amd64
     commands:
       - GOOS=darwin go {{.flags}} -o build/darwin/{{.CI_PROJECT_NAME}} -v
       - GOOS=linux go {{.flags}} -o build/linux/{{.CI_PROJECT_NAME}} -v
       - GOOS=windows go {{.flags}} -o build/windows/{{.CI_PROJECT_NAME}}.exe -v
+      # - docker build . -t {{.DOCKER_IMAGE_TAG}}
 
   clean:
     description: removes all files listed in .gitignore
@@ -118,13 +123,12 @@ tasks:
       - "chmod +x build/{{OS}}/{{.CI_PROJECT_NAME}}"
       - "cp build/{{OS}}/{{.CI_PROJECT_NAME}} /usr/local/bin"
 
-  upload:
-    description: moves compiled files to /usr/local/bin/
-    commands: ["aws s3 sync build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/{{.CI_COMMIT_TAG}}"]
-
   publish:
-    description: publish new stable version under the `latest` tag
-    commands: ["aws s3 sync build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest"]
+    description: publish artifacts to S3
+    commands:
+      - "aws s3 sync --acl bucket-owner-full-control build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/{{.CI_COMMIT_TAG}}"
+      - "aws s3 sync --acl bucket-owner-full-control build s3://{{.S3_BUCKET}}/{{.CI_PROJECT_NAME}}/latest"
+      - "docker push {{.DOCKER_IMAGE_TAG}}"
 
   login:
     description: checkout temporary aws access keys
@@ -153,27 +157,26 @@ tasks:
   #   commands:
   #     - "go test ./app -coverprofile coverage.out && go tool cover -func=coverage.out"
 
-  pre-release:
-    description: bump patch version and release for deployment
+  release:
+    description: bump version and release for deployment
     commands:
-      - cgen bump --level pre-release
-      - git push --follow-tags --no-verify
+      - cgen bump --level {{.type}} --push
+
+  pre-release:
+    description: bump the prerelease version and deploy skipping production
+    commands: [tasks run release --variable type=pre-release]
 
   release-patch:
-    description: bump patch version and release for deployment
-    commands:
-      - cgen bump --level patch
-      - git push --follow-tags --no-verify
-
-  release-minor:
     description: bump minor version and release for deployment
-    commands:
-      - cgen bump --level minor
-      - git push --follow-tags --no-verify
+    commands: [tasks run release --variable type=patch]
 
-  upgrade:
-    description: upgrade the current project
-    commands: [cgen upgrade, yarn upgrade --latest]
+  release-feature:
+    description: bump minor version and release for deployment
+    commands: [tasks run release --variable type=minor]
+
+  release-breaking-change:
+    description: bump major version and release for deployment
+    commands: [tasks run release --variable type=major]
 
   oops:
     description: undo last commit
